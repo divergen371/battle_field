@@ -45,4 +45,6 @@ ttl_destroyer_*.log
 .DS_Store
 Thumbs.db
 
+.env
+.env/
 doc/*
