@@ -21,8 +21,8 @@ AWSで様々な脆弱性テスト環境を低コスト（月5 USD以内）で構
 ### 1. リポジトリのクローンとセットアップ
 
 ```bash
-git clone https://github.com/your-username/aws-pentest-terraform.git
-cd aws-pentest-terraform
+git clone https://github.com/divergen371/battle_field.git
+cd battle_field
 ```
 
 ### 2. 変数ファイルの設定
@@ -35,7 +35,7 @@ cp examples/metasploitable2.auto.tfvars.example metasploitable2.auto.tfvars
 
 ファイルを編集して自分のIPアドレスを設定します（必ず実施）：
 
-```
+```text
 my_ip_cidr = "あなたのIP/32"  # 例: "203.0.113.10/32"
 ```
 
@@ -95,4 +95,4 @@ terraform destroy -var-file=metasploitable2.auto.tfvars
 
 ## ライセンス
 
-MITライセンス（詳細はLICENSEファイルを参照） 
+MITライセンス（詳細はLICENSEファイルを参照）
