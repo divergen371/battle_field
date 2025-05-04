@@ -1,0 +1,14 @@
+# Metasploitable2シナリオ実行用サンプル設定
+# このファイルを `metasploitable2.auto.tfvars` としてコピーして使用してください
+
+# 実行するシナリオ名（metasploitable2に固定）
+scenario_name = "metasploitable2"
+
+# リソースの生存期間（時間）
+ttl_hours = 2
+
+# 接続を許可するIPアドレス（自分のIPアドレスに変更してください）
+my_ip_cidr = "1.2.3.4/32"
+
+# プロジェクト名（任意）
+project_name = "pentest-lab" 
