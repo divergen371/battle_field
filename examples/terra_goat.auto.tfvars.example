@@ -1,0 +1,14 @@
+# TerraGoatシナリオ実行用サンプル設定
+# このファイルを `terra_goat.auto.tfvars` としてコピーして使用してください
+
+# 実行するシナリオ名（terra_goatに固定）
+scenario_name = "terra_goat"
+
+# リソースの生存期間（時間）
+ttl_hours = 2
+
+# 接続を許可するIPアドレス（自分のIPアドレスに変更してください）
+my_ip_cidr = "1.2.3.4/32"
+
+# プロジェクト名（任意）
+project_name = "pentest-lab" 

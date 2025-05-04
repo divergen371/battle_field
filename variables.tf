@@ -35,4 +35,16 @@ variable "project_name" {
   description = "プロジェクト名（リソース名のプレフィックス）"
   type        = string
   default     = "pentest-lab"
+}
+
+variable "notification_emails" {
+  description = "予算超過通知を送信するメールアドレスのリスト"
+  type        = list(string)
+  default     = []
+}
+
+variable "slack_webhook_url" {
+  description = "Slack通知用のWebhook URL（設定しない場合は空文字）"
+  type        = string
+  default     = ""
 } 
