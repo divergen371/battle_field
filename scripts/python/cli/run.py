@@ -4,14 +4,10 @@ Terraformシナリオの実行・停止を管理するCLIツール
 既存のrun.shをベースにしたより拡張性のあるバージョンです
 """
 
-import os
-import re
-import shutil
 import subprocess
 import sys
-import time
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import List, Optional
 
 import click
 import requests
@@ -45,8 +41,8 @@ class Colors:
 
 def get_project_root() -> Path:
     """プロジェクトのルートディレクトリを取得"""
-    script_dir = Path(__file__).parent.parent.parent.parent
-    return script_dir
+    # 絶対パスでプロジェクトルートを指定
+    return Path("/Users/atsushi/battle_field")
 
 
 def run_command(command: List[str], cwd: Optional[Path] = None) -> subprocess.CompletedProcess:
