@@ -26,6 +26,6 @@ fi
 # ZIPファイルを作成
 cd "${LAMBDA_DIR}"
 zip -r "${OUTPUT_ZIP}" .
-cd - > /dev/null
+cd - >/dev/null
 
-echo "Lambda関数のデプロイパッケージを作成しました: ${OUTPUT_ZIP}" 
+echo "Lambda関数のデプロイパッケージを作成しました: ${OUTPUT_ZIP}"
