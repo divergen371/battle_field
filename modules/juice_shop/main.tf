@@ -1,16 +1,16 @@
 variable "project_name" {
-  description = "プロジェクト名（リソース名のプレフィックス）"
+  description = "Project name (resource name prefix)"
   type        = string
   default     = "pentest-lab"
 }
 
 variable "my_ip_cidr" {
-  description = "アクセスを許可するIPアドレス（CIDR形式）"
+  description = "Allowed IP address (CIDR format)"
   type        = string
 }
 
 variable "ttl_hours" {
-  description = "リソースの生存期間（時間）"
+  description = "Resource lifetime (hours)"
   type        = number
   default     = 2
 }
@@ -90,7 +90,7 @@ resource "aws_route_table_association" "public" {
 # セキュリティグループの作成
 resource "aws_security_group" "this" {
   name        = "${local.name_prefix}-sg"
-  description = "OWASP Juice Shop用セキュリティグループ"
+  description = "OWASP Juice Shop security group"
   vpc_id      = aws_vpc.this.id
 
   # 許可されたCIDRからのJuice Shop接続(3000番ポート)
@@ -108,7 +108,7 @@ resource "aws_security_group" "this" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
-    description = "全ての外向き通信"
+    description = "All outbound traffic"
   }
 
   tags = {
@@ -259,10 +259,10 @@ resource "null_resource" "ttl_destroyer" {
     command = <<-EOT
       (
         # バックグラウンドで実行
-        echo "TTL: ${var.ttl_hours}時間後（$(date -d "+${var.ttl_hours} hour" "+%Y-%m-%d %H:%M:%S")）に'juice_shop'シナリオを自動破棄します"
+        echo "TTL: ${var.ttl_hours} hours later ($(date -d "+${var.ttl_hours} hour" "+%Y-%m-%d %H:%M:%S")） will automatically destroy 'juice_shop' scenario"
         sleep ${var.ttl_hours * 3600}
         cd ${path.root}
-        echo "TTL期限切れ: 'juice_shop'シナリオを自動破棄します（$(date "+%Y-%m-%d %H:%M:%S")）"
+        echo "TTL expired: 'juice_shop' scenario will automatically destroy ($(date "+%Y-%m-%d %H:%M:%S")）"
         terraform destroy -auto-approve -var="scenario_name=juice_shop"
       ) &>/tmp/ttl_destroyer_juice_shop.log &
     EOT
@@ -277,22 +277,22 @@ output "juice_shop_url" {
 
 # 取得方法の説明を出力
 output "connection_instructions" {
-  description = "接続方法"
+  description = "Connection instructions"
   value       = <<-EOT
-    OWASP Juice Shop 環境が起動しました！
+    OWASP Juice Shop environment started!
     
-    ※ ECS Fargateは直接IPを取得できないため、AWSコンソールの以下の手順で確認してください：
+    ※ ECS Fargate cannot directly get IP, please check the following steps in AWS Console:
     
-    1. ECSコンソールを開く
-    2. クラスタ "${local.name_prefix}-cluster" をクリック
-    3. サービス "${local.name_prefix}-service" をクリック
-    4. 「Tasks」タブをクリック
-    5. 実行中のタスクをクリック
-    6. 「Public IP」をメモする
+    1. Open ECS Console
+    2. Click on cluster "${local.name_prefix}-cluster"
+    3. Click on service "${local.name_prefix}-service"
+    4. Click on "Tasks" tab
+    5. Click on running task
+    6. Note down the "Public IP"
     
-    ブラウザで以下のURLにアクセス：
-    http://[上記で確認したIP]:3000
+    Access the following URL in your browser:
+    http://[IP noted above]:3000
     
-    ${var.ttl_hours}時間後に自動的に削除されます。
+    It will automatically be deleted after ${var.ttl_hours} hours.
   EOT
 } 

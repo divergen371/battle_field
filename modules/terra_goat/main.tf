@@ -1,16 +1,16 @@
 variable "project_name" {
-  description = "プロジェクト名（リソース名のプレフィックス）"
+  description = "Project name (resource name prefix)"
   type        = string
   default     = "pentest-lab"
 }
 
 variable "my_ip_cidr" {
-  description = "アクセスを許可するIPアドレス（CIDR形式）"
+  description = "Allowed IP address (CIDR format)"
   type        = string
 }
 
 variable "ttl_hours" {
-  description = "リソースの生存期間（時間）"
+  description = "Resource lifetime (hours)"
   type        = number
   default     = 2
 }
@@ -87,7 +87,7 @@ resource "aws_route_table_association" "public" {
 # 脆弱: すべてのトラフィックを許可するセキュリティグループ
 resource "aws_security_group" "vulnerable_sg" {
   name        = "${local.name_prefix}-vulnerable-sg"
-  description = "意図的に脆弱なセキュリティグループ（すべてのトラフィックを許可）"
+  description = "Intentionally vulnerable security group (allow all traffic)"
   vpc_id      = aws_vpc.this.id
 
   # 脆弱: すべてのインバウンドトラフィックを許可
@@ -96,7 +96,7 @@ resource "aws_security_group" "vulnerable_sg" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
-    description = "すべてのインバウンドトラフィック（脆弱な設定）"
+    description = "All inbound traffic (vulnerable setting)"
   }
 
   # 脆弱: すべてのアウトバウンドトラフィックを許可
@@ -105,7 +105,7 @@ resource "aws_security_group" "vulnerable_sg" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
-    description = "すべてのアウトバウンドトラフィック"
+    description = "All outbound traffic"
   }
 
   tags = {
@@ -287,35 +287,35 @@ resource "null_resource" "ttl_destroyer" {
 
 # 出力
 output "terragoat_bucket_name" {
-  description = "脆弱性のあるS3バケット名"
+  description = "Vulnerable S3 bucket name"
   value       = aws_s3_bucket.vulnerable_bucket.bucket
 }
 
 output "terragoat_db_endpoint" {
-  description = "脆弱性のあるRDSエンドポイント"
+  description = "Vulnerable RDS endpoint"
   value       = aws_db_instance.vulnerable_db.endpoint
 }
 
 output "terragoat_connection_instructions" {
-  description = "接続手順"
+  description = "Connection instructions"
   value       = <<EOT
-TerraGoat脆弱環境の接続情報:
+TerraGoat vulnerable environment connection info:
 
-S3バケット: aws s3 ls s3://${aws_s3_bucket.vulnerable_bucket.bucket}
-（注：パブリックアクセス可能な脆弱なバケット）
+S3 bucket: aws s3 ls s3://${aws_s3_bucket.vulnerable_bucket.bucket}
+(Note: Vulnerable bucket with public access)
 
-RDSデータベース:
-エンドポイント: ${aws_db_instance.vulnerable_db.endpoint}
-ユーザー名: admin
-パスワード: Password123!
-（注：パブリックにアクセス可能な脆弱なデータベース）
+RDS database:
+Endpoint: ${aws_db_instance.vulnerable_db.endpoint}
+Username: admin
+Password: Password123!
+(Note: Vulnerable database with public access)
 
-脆弱性を含むIaC構成を確認：
+Check vulnerable IaC configuration:
 terraform state show aws_s3_bucket.vulnerable_bucket
 terraform state show aws_security_group.vulnerable_sg
 terraform state show aws_db_instance.vulnerable_db
 terraform state show aws_iam_role_policy.vulnerable_policy
 
-注意：この環境は学習目的のみで使用し、${var.ttl_hours}時間後に自動的に削除されます。
+Note: This environment is for learning purposes only and will be automatically deleted after ${var.ttl_hours} hours.
 EOT
 } 

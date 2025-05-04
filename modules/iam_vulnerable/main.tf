@@ -1,16 +1,16 @@
 variable "project_name" {
-  description = "プロジェクト名（リソース名のプレフィックス）"
+  description = "Project name (resource name prefix)"
   type        = string
   default     = "pentest-lab"
 }
 
 variable "my_ip_cidr" {
-  description = "アクセスを許可するIPアドレス（CIDR形式）"
+  description = "Allowed IP address (CIDR format)"
   type        = string
 }
 
 variable "ttl_hours" {
-  description = "リソースの生存期間（時間）"
+  description = "Resource lifetime (hours)"
   type        = number
   default     = 2
 }
@@ -136,7 +136,7 @@ resource "aws_iam_role_policy" "vulnerable_ec2_policy" {
 resource "aws_iam_policy" "vulnerable_custom_policy" {
   name        = "${local.name_prefix}-custom-policy"
   path        = "/vulnerable/"
-  description = "脆弱なカスタムポリシー"
+  description = "Vulnerable custom policy"
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -167,7 +167,7 @@ resource "aws_iam_user_policy_attachment" "vulnerable_policy_attachment" {
 resource "aws_iam_policy" "vulnerable_bucket_policy" {
   name        = "${local.name_prefix}-bucket-policy"
   path        = "/vulnerable/"
-  description = "脆弱なS3バケットポリシー"
+  description = "Vulnerable S3 bucket policy"
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -186,7 +186,7 @@ resource "aws_iam_policy" "vulnerable_bucket_policy" {
 resource "aws_iam_policy" "no_mfa_policy" {
   name        = "${local.name_prefix}-no-mfa-policy"
   path        = "/vulnerable/"
-  description = "MFAなしでのアクセスを許可する脆弱なポリシー"
+  description = "Vulnerable policy allowing access without MFA"
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -227,39 +227,92 @@ resource "null_resource" "ttl_destroyer" {
 
 # 安全上の問題から、アクセスキーは出力しません
 output "iam_vulnerable_password" {
-  description = "脆弱なIAMユーザーのパスワード（本番環境では絶対に使用しないでください）"
+  description = "Vulnerable IAM user password (do not use in production)"
   value       = aws_iam_user_login_profile.vulnerable_profile.password
   sensitive   = true
 }
 
 output "iam_vulnerable_instructions" {
-  description = "IAM脆弱性環境の使用手順"
+  description = "IAM vulnerability environment usage instructions"
   value       = <<EOT
-IAM脆弱性検証環境のご利用方法:
+IAM vulnerability verification environment usage:
 
-この環境では、以下のようなIAM関連の脆弱性が含まれています:
-1. 安全でないパスワードポリシー（短いパスワード、ローテーションなし）
-2. 長期的なアクセスキー（ローテーションなし）
-3. 過剰な権限のIAMグループとロール
-4. 制限のないリソースアクセス（"*"の使用）
-5. 不適切なクロスアカウントアクセス設定
-6. MFA認証の欠如
+This environment contains the following IAM vulnerabilities:
+1. Unsafe password policy (short password, no rotation)
+2. Long-term access key (no rotation)
+3. Excessive IAM group and role privileges
+4. Unlimited resource access ("*" usage)
+5. Inappropriate cross-account access settings
+6. Lack of MFA
 
-検証用IAMユーザー:
-- ユーザー名: ${aws_iam_user.vulnerable_user.name}
-- パスワード: （セキュリティ上の理由で非表示 - terraform output -raw iam_vulnerable_passwordで表示）
+Verification IAM user:
+- Username: ${aws_iam_user.vulnerable_user.name}
+- Password: (Security reasons, not displayed - use terraform output -raw iam_vulnerable_password to display)
 
-注意：
-- これらのリソースは学習・検証目的のみに使用してください
-- ${var.ttl_hours}時間後に自動的に削除されます
-- 実際の環境では、これらの脆弱性を修正することが必要です
+Note:
+- These resources are only for learning and verification purposes
+- They will be automatically deleted after ${var.ttl_hours} hours
+- In actual environments, it is necessary to correct these vulnerabilities
 
-推奨される検証手順:
-1. AWS IAM AccessAnalyzerを使用して問題を特定する
-2. AWS CLIで「aws iam get-account-authorization-details」を実行
-3. スクリプトやツールを使用してポリシーの脆弱性を分析
+Recommended verification steps:
+1. Use AWS IAM AccessAnalyzer to identify issues
+2. Run "aws iam get-account-authorization-details" with AWS CLI
+3. Analyze vulnerabilities in policies using scripts or tools
 
-この環境は自動的に${var.ttl_hours}時間後に削除されますが、
-作業後は「terraform destroy -var="scenario_name=iam_vulnerable"」で手動削除することも可能です。
+This environment will be automatically deleted after ${var.ttl_hours} hours,
+but you can manually delete it after completing the work with "terraform destroy -var="scenario_name=iam_vulnerable"".
+EOT
+}
+
+output "iam_vulnerable_custom_policy" {
+  description = "Vulnerable custom policy"
+  value       = aws_iam_policy.vulnerable_custom_policy.arn
+}
+
+output "iam_vulnerable_s3_policy" {
+  description = "Vulnerable S3 bucket policy"
+  value       = aws_iam_policy.vulnerable_bucket_policy.arn
+}
+
+output "iam_vulnerable_no_mfa_policy" {
+  description = "Vulnerable policy allowing access without MFA"
+  value       = aws_iam_policy.no_mfa_policy.arn
+}
+
+output "iam_vulnerable_user_password" {
+  description = "Vulnerable IAM user password (do not use in production)"
+  value       = aws_iam_user.vulnerable_user.password
+  sensitive   = true
+}
+
+output "iam_vulnerable_usage_instructions" {
+  description = "IAM vulnerability environment usage instructions"
+  value       = <<EOT
+IAM vulnerability verification environment usage:
+
+This environment contains the following IAM vulnerabilities:
+1. Unsafe password policy (short password, no rotation)
+2. Long-term access key (no rotation)
+3. Excessive IAM group and role privileges
+4. Unlimited resource access ("*" usage)
+5. Inappropriate cross-account access settings
+6. Lack of MFA
+
+Verification IAM user:
+- Username: ${aws_iam_user.vulnerable_user.name}
+- Password: (Security reasons, not displayed - use terraform output -raw iam_vulnerable_password to display)
+
+Note:
+- These resources are only for learning and verification purposes
+- They will be automatically deleted after ${var.ttl_hours} hours
+- In actual environments, it is necessary to correct these vulnerabilities
+
+Recommended verification steps:
+1. Use AWS IAM AccessAnalyzer to identify issues
+2. Run "aws iam get-account-authorization-details" with AWS CLI
+3. Analyze vulnerabilities in policies using scripts or tools
+
+This environment will be automatically deleted after ${var.ttl_hours} hours,
+but you can manually delete it after completing the work with "terraform destroy -var="scenario_name=iam_vulnerable"".
 EOT
 } 

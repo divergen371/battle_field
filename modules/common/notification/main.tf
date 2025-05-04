@@ -1,22 +1,22 @@
 variable "project_name" {
-  description = "プロジェクト名（リソース名のプレフィックス）"
+  description = "Project name (resource name prefix)"
   type        = string
   default     = "pentest-lab"
 }
 
 variable "email_addresses" {
-  description = "通知先メールアドレス（リスト）"
+  description = "Notification email addresses (list)"
   type        = list(string)
 }
 
 variable "slack_webhook_url" {
-  description = "Slack Webhook URL（設定する場合）"
+  description = "Slack Webhook URL (if set)"
   type        = string
   default     = ""
 }
 
 variable "ttl_hours" {
-  description = "リソースの生存期間（時間）"
+  description = "Resource lifetime (hours)"
   type        = number
   default     = 2
 }
@@ -160,6 +160,6 @@ resource "null_resource" "ttl_destroyer" {
 
 # 出力
 output "sns_topic_arn" {
-  description = "予算アラート通知用SNSトピックARN"
+  description = "SNS topic ARN for budget alert notification"
   value       = aws_sns_topic.budget_alert.arn
 } 

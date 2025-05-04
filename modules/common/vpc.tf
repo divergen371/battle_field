@@ -1,17 +1,17 @@
 variable "vpc_cidr" {
-  description = "VPCのCIDRブロック"
+  description = "VPC CIDR block"
   type        = string
   default     = "10.0.0.0/16"
 }
 
 variable "public_subnet_cidrs" {
-  description = "パブリックサブネットのCIDRブロックリスト"
+  description = "Public subnet CIDR block list"
   type        = list(string)
   default     = ["10.0.1.0/24", "10.0.2.0/24"]
 }
 
 variable "vpc_name" {
-  description = "VPC名"
+  description = "VPC name"
   type        = string
 }
 
@@ -75,11 +75,11 @@ resource "aws_route_table_association" "public" {
 }
 
 output "vpc_id" {
-  description = "作成されたVPC ID"
+  description = "Created VPC ID"
   value       = aws_vpc.this.id
 }
 
 output "public_subnet_ids" {
-  description = "作成されたパブリックサブネットIDのリスト"
+  description = "Created public subnet ID list"
   value       = aws_subnet.public[*].id
 } 

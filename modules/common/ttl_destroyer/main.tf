@@ -1,22 +1,22 @@
 variable "project_name" {
-  description = "プロジェクト名（リソース名のプレフィックス）"
+  description = "Project name (resource name prefix)"
   type        = string
   default     = "pentest-lab"
 }
 
 variable "ttl_hours" {
-  description = "リソースの生存期間（時間）"
+  description = "Resource lifetime (hours)"
   type        = number
   default     = 2
 }
 
 variable "sns_topic_arn" {
-  description = "通知先SNSトピックARN"
+  description = "Notification SNS topic ARN"
   type        = string
 }
 
 variable "scenario_name" {
-  description = "シナリオ名"
+  description = "Scenario name"
   type        = string
 }
 
@@ -77,7 +77,7 @@ resource "aws_iam_role" "destroyer_lambda_role" {
 # Lambda実行ポリシー
 resource "aws_iam_policy" "destroyer_lambda_policy" {
   name        = "${local.name_prefix}-policy"
-  description = "TTL破棄Lambda関数実行ポリシー"
+  description = "TTL destroyer Lambda function execution policy"
   
   policy = jsonencode({
     Version = "2012-10-17"
@@ -266,16 +266,16 @@ resource "aws_lambda_permission" "allow_eventbridge" {
 
 # 出力
 output "ttl_expiration_time" {
-  description = "TTL期限切れ時刻"
+  description = "TTL expiration time"
   value       = local.expiration_time
 }
 
 output "event_rule_name" {
-  description = "EventBridgeルール名"
+  description = "EventBridge rule name"
   value       = aws_cloudwatch_event_rule.ttl_schedule.name
 }
 
 output "lambda_function_name" {
-  description = "TTL破棄用Lambda関数名"
+  description = "TTL destroyer Lambda function name"
   value       = aws_lambda_function.ttl_destroyer.function_name
 } 

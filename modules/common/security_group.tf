@@ -1,23 +1,23 @@
 variable "vpc_id" {
-  description = "セキュリティグループを作成するVPC ID"
+  description = "VPC ID to create security group"
   type        = string
 }
 
 variable "allowed_cidr" {
-  description = "接続を許可するCIDR"
+  description = "CIDR to allow connections"
   type        = string
   default     = "0.0.0.0/0"
 }
 
 variable "name_prefix" {
-  description = "セキュリティグループ名のプレフィックス"
+  description = "Security group name prefix"
   type        = string
 }
 
 variable "description" {
-  description = "セキュリティグループの説明"
+  description = "Security group description"
   type        = string
-  default     = "脆弱環境アクセス用セキュリティグループ"
+  default     = "Security group for vulnerable environment access"
 }
 
 # 基本的なInbound/Outboundルールを持つセキュリティグループ
@@ -32,7 +32,7 @@ resource "aws_security_group" "this" {
     to_port     = 22
     protocol    = "tcp"
     cidr_blocks = [var.allowed_cidr]
-    description = "許可されたCIDRからのSSH接続"
+    description = "SSH access from allowed CIDR"
   }
 
   ingress {
@@ -40,7 +40,7 @@ resource "aws_security_group" "this" {
     to_port     = 80
     protocol    = "tcp"
     cidr_blocks = [var.allowed_cidr]
-    description = "許可されたCIDRからのHTTP接続"
+    description = "HTTP access from allowed CIDR"
   }
 
   ingress {
@@ -48,7 +48,7 @@ resource "aws_security_group" "this" {
     to_port     = 443
     protocol    = "tcp"
     cidr_blocks = [var.allowed_cidr]
-    description = "許可されたCIDRからのHTTPS接続"
+    description = "HTTPS access from allowed CIDR"
   }
 
   ingress {
@@ -56,7 +56,7 @@ resource "aws_security_group" "this" {
     to_port     = 3000
     protocol    = "tcp"
     cidr_blocks = [var.allowed_cidr]
-    description = "許可されたCIDRからのJuice Shop接続"
+    description = "Juice Shop access from allowed CIDR"
   }
 
   ingress {
@@ -64,7 +64,7 @@ resource "aws_security_group" "this" {
     to_port     = 8080
     protocol    = "tcp"
     cidr_blocks = [var.allowed_cidr]
-    description = "許可されたCIDRからのアプリケーション接続"
+    description = "Application access from allowed CIDR"
   }
 
   # 全ての外向き通信を許可
@@ -73,7 +73,7 @@ resource "aws_security_group" "this" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
-    description = "全ての外向き通信"
+    description = "All outbound traffic"
   }
 
   tags = {
@@ -82,6 +82,6 @@ resource "aws_security_group" "this" {
 }
 
 output "security_group_id" {
-  description = "作成されたセキュリティグループのID"
+  description = "ID of created security group"
   value       = aws_security_group.this.id
 } 

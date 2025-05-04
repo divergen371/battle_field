@@ -1,16 +1,16 @@
 variable "project_name" {
-  description = "プロジェクト名（リソース名のプレフィックス）"
+  description = "Project name (resource name prefix)"
   type        = string
   default     = "pentest-lab"
 }
 
 variable "my_ip_cidr" {
-  description = "アクセスを許可するIPアドレス（CIDR形式）"
+  description = "Allowed IP address (CIDR format)"
   type        = string
 }
 
 variable "ttl_hours" {
-  description = "リソースの生存期間（時間）"
+  description = "Resource lifetime (hours)"
   type        = number
   default     = 2
 }
@@ -344,36 +344,36 @@ resource "null_resource" "ttl_destroyer" {
 
 # 出力
 output "cloudgoat_instance_ip" {
-  description = "CloudGoat EC2インスタンスのパブリックIP"
+  description = "CloudGoat EC2 instance public IP"
   value       = aws_instance.vulnerable_instance.public_ip
 }
 
 output "cloudgoat_bucket_name" {
-  description = "CloudGoat S3バケット名"
+  description = "CloudGoat S3 bucket name"
   value       = aws_s3_bucket.data_bucket.bucket
 }
 
 output "cloudgoat_app_user" {
-  description = "CloudGoatアプリケーションユーザー名"
+  description = "CloudGoat application user name"
   value       = aws_iam_user.app_user.name
 }
 
 output "cloudgoat_access_key_id" {
-  description = "CloudGoatアプリケーションユーザーのアクセスキーID"
+  description = "CloudGoat application user access key ID"
   value       = aws_iam_access_key.app_user_key.id
   sensitive   = true
 }
 
 output "cloudgoat_secret_access_key" {
-  description = "CloudGoatアプリケーションユーザーのシークレットアクセスキー"
+  description = "CloudGoat application user secret access key"
   value       = aws_iam_access_key.app_user_key.secret
   sensitive   = true
 }
 
 output "cloudgoat_connection_instructions" {
-  description = "CloudGoat環境への接続手順"
+  description = "CloudGoat connection instructions"
   value       = <<EOF
-    CloudGoat演習環境へのアクセス手順:
+    CloudGoat environment access instructions:
 
     1. SSHでEC2インスタンスに接続:
        ssh ec2-user@${aws_instance.vulnerable_instance.public_ip}

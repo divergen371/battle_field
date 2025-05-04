@@ -1,22 +1,22 @@
 variable "ttl_hours" {
-  description = "リソースの生存期間（時間）"
+  description = "Resource lifetime (hours)"
   type        = number
   default     = 2
 }
 
-variable "enabled" {
-  description = "TTL破棄機能を有効にするか"
+variable "enable_ttl_destroyer" {
+  description = "Enable TTL destroyer"
   type        = bool
   default     = true
 }
 
 variable "scenario_name" {
-  description = "破棄対象のシナリオ名"
+  description = "Scenario name to destroy"
   type        = string
 }
 
 resource "null_resource" "ttl_destroyer" {
-  count = var.enabled ? 1 : 0
+  count = var.enable_ttl_destroyer ? 1 : 0
 
   # TTL時間が変更されたら再実行
   triggers = {
@@ -38,7 +38,7 @@ resource "null_resource" "ttl_destroyer" {
   }
 }
 
-output "destruction_time" {
-  description = "リソース自動破棄予定時刻"
-  value       = var.enabled ? formatdate("YYYY-MM-DD HH:mm:ss", timeadd(timestamp(), "${var.ttl_hours}h")) : "無効"
+output "ttl_destroy_time" {
+  description = "Scheduled resource destroy time"
+  value       = null_resource.ttl_destroyer.triggers.destroy_time
 } 

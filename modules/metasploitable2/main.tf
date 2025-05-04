@@ -1,16 +1,16 @@
 variable "project_name" {
-  description = "プロジェクト名（リソース名のプレフィックス）"
+  description = "Project name (resource name prefix)"
   type        = string
   default     = "pentest-lab"
 }
 
 variable "my_ip_cidr" {
-  description = "アクセスを許可するIPアドレス（CIDR形式）"
+  description = "Allowed IP address (CIDR format)"
   type        = string
 }
 
 variable "ttl_hours" {
-  description = "リソースの生存期間（時間）"
+  description = "Resource lifetime (hours)"
   type        = number
   default     = 2
 }
@@ -87,7 +87,7 @@ resource "aws_route_table_association" "public" {
 # セキュリティグループの作成
 resource "aws_security_group" "this" {
   name        = "${local.name_prefix}-sg"
-  description = "Metasploitable2用セキュリティグループ"
+  description = "Metasploitable2 security group"
   vpc_id      = aws_vpc.this.id
 
   # 許可されたCIDRからの接続のみ許可
@@ -96,7 +96,7 @@ resource "aws_security_group" "this" {
     to_port     = 22
     protocol    = "tcp"
     cidr_blocks = [var.my_ip_cidr]
-    description = "SSH接続"
+    description = "SSH connection"
   }
 
   ingress {
@@ -104,7 +104,7 @@ resource "aws_security_group" "this" {
     to_port     = 80
     protocol    = "tcp"
     cidr_blocks = [var.my_ip_cidr]
-    description = "HTTP接続"
+    description = "HTTP connection"
   }
 
   # 脆弱なサービスのために追加のポート
@@ -136,7 +136,7 @@ resource "aws_security_group" "this" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
-    description = "全ての外向き通信"
+    description = "All outbound traffic"
   }
 
   tags = {
@@ -277,24 +277,24 @@ resource "null_resource" "ttl_destroyer" {
 }
 
 output "metasploitable2_public_ip" {
-  description = "Metasploitable2のパブリックIP"
+  description = "Metasploitable2 public IP"
   value       = aws_instance.metasploitable2.public_ip
 }
 
 output "connection_instructions" {
-  description = "接続方法"
+  description = "Connection instructions"
   value       = <<-EOT
-    Metasploitable2の環境が起動しました！
+    Metasploitable2 environment started!
     
-    パブリックIP: ${aws_instance.metasploitable2.public_ip}
+    Public IP: ${aws_instance.metasploitable2.public_ip}
     
-    以下のサービスにアクセスできます：
+    You can access the following services:
     - SSH: ssh -p 22 ${aws_instance.metasploitable2.public_ip} (user: msfadmin, pass: msfadmin)
     - FTP: ftp ${aws_instance.metasploitable2.public_ip} (anonymous or msfadmin)
     - Web: http://${aws_instance.metasploitable2.public_ip}/
     - DVWA: http://${aws_instance.metasploitable2.public_ip}/dvwa/
     - Mutillidae: http://${aws_instance.metasploitable2.public_ip}/mutillidae/
     
-    ${var.ttl_hours}時間後に自動的に削除されます。
+    It will be automatically deleted after ${var.ttl_hours} hours.
   EOT
 } 

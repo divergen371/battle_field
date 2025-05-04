@@ -1,50 +1,50 @@
 variable "aws_region" {
-  description = "AWS実行リージョン"
+  description = "AWS region to use"
   type        = string
   default     = "ap-northeast-1"
 }
 
 variable "ttl_hours" {
-  description = "リソースの生存期間（時間）。この時間後に自動破棄されます"
+  description = "Resource lifetime (hours). Resources will be automatically destroyed after this time."
   type        = number
   default     = 2
 }
 
 variable "my_ip_cidr" {
-  description = "アクセスを許可するIPアドレス（CIDR形式）"
+  description = "IP address to allow access (CIDR format)"
   type        = string
   # デフォルト値は実際の使用時に上書きする
   default     = "0.0.0.0/0"
   validation {
     condition     = can(cidrnetmask(var.my_ip_cidr))
-    error_message = "my_ip_cidrは有効なCIDR形式（例：1.2.3.4/32）で指定してください"
+    error_message = "my_ip_cidr must be a valid CIDR format (e.g., 1.2.3.4/32)"
   }
 }
 
 variable "scenario_name" {
-  description = "実行するシナリオ名"
+  description = "Scenario name to execute"
   type        = string
   default     = "all"
   validation {
     condition     = contains(["all", "metasploitable2", "juice_shop", "terra_goat", "iam_vulnerable", "cloudgoat_min", "awsgoat_min"], var.scenario_name)
-    error_message = "シナリオ名は定義済みのものから選択してください"
+    error_message = "scenario_name must be one of the defined scenarios"
   }
 }
 
 variable "project_name" {
-  description = "プロジェクト名（リソース名のプレフィックス）"
+  description = "Project name (resource name prefix)"
   type        = string
   default     = "pentest-lab"
 }
 
 variable "notification_emails" {
-  description = "予算超過通知を送信するメールアドレスのリスト"
+  description = "List of email addresses to send budget overage notifications"
   type        = list(string)
   default     = []
 }
 
 variable "slack_webhook_url" {
-  description = "Slack通知用のWebhook URL（設定しない場合は空文字）"
+  description = "Slack Webhook URL for notifications (empty string if not set)"
   type        = string
   default     = ""
 } 
