@@ -25,6 +25,9 @@ bf-run = "cli.run:cli"
 bf-cost = "aws.cost:cli"
 bf-budget = "aws.budget:cli"
 
+[tool.hatch.build.targets.wheel]
+packages = ["."]
+
 [tool.rye]
 managed = true
 dev-dependencies = [
