@@ -47,7 +47,6 @@ Thumbs.db
 
 .env
 .env/
-doc/*
 
 # Python関連
 .venv/
