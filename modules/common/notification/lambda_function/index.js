@@ -2,85 +2,90 @@
  * SNSからの通知をSlack Webhookに転送するLambda関数
  */
 
-const https = require('node:https');
-const url = require('node:url');
+const https = require("node:https");
+const url = require("node:url");
 
 exports.handler = async (event) => {
   try {
-    console.log('SNSイベントを受信:', JSON.stringify(event, null, 2));
-    
+    console.log("SNSイベントを受信:", JSON.stringify(event, null, 2));
+
     // SNSメッセージを解析
     const snsMessage = event.Records[0].Sns;
     const messageText = snsMessage.Message;
-    const subject = snsMessage.Subject || 'AWS予算アラート';
-    
+    const subject = snsMessage.Subject || "AWS予算アラート";
+
     // Webhook URLを環境変数から取得
     const webhookUrl = process.env.SLACK_WEBHOOK_URL;
     if (!webhookUrl) {
-      throw new Error('SLACK_WEBHOOK_URL環境変数が設定されていません');
+      throw new Error("SLACK_WEBHOOK_URL環境変数が設定されていません");
     }
-    
+
     // Slackメッセージを構築
     const slackMessage = {
       blocks: [
         {
-          type: 'header',
+          type: "header",
           text: {
-            type: 'plain_text',
-            text: `⚠️ ${subject}`
-          }
+            type: "plain_text",
+            text: `⚠️ ${subject}`,
+          },
         },
         {
-          type: 'section',
+          type: "section",
           text: {
-            type: 'mrkdwn',
-            text: messageText
-          }
+            type: "mrkdwn",
+            text: messageText,
+          },
         },
         {
-          type: 'context',
+          type: "context",
           elements: [
             {
-              type: 'mrkdwn',
-              text: `*通知日時:* ${new Date(snsMessage.Timestamp).toLocaleString()}`
-            }
-          ]
+              type: "mrkdwn",
+              text: `*通知日時:* ${new Date(
+                snsMessage.Timestamp
+              ).toLocaleString()}`,
+            },
+          ],
         },
         {
-          type: 'divider'
+          type: "divider",
         },
         {
-          type: 'section',
+          type: "section",
           text: {
-            type: 'mrkdwn',
-            text: '詳細はAWS Billingコンソールで確認してください。'
+            type: "mrkdwn",
+            text: "詳細はAWS Billingコンソールで確認してください。",
           },
           accessory: {
-            type: 'button',
+            type: "button",
             text: {
-              type: 'plain_text',
-              text: 'Billingを開く'
+              type: "plain_text",
+              text: "Billingを開く",
             },
-            url: 'https://console.aws.amazon.com/billing/home',
-            action_id: 'button-action'
-          }
-        }
-      ]
+            url: "https://console.aws.amazon.com/billing/home",
+            action_id: "button-action",
+          },
+        },
+      ],
     };
-    
+
     // Slackに通知を送信
     const response = await sendToSlack(webhookUrl, slackMessage);
-    console.log('Slack通知結果:', response);
-    
+    console.log("Slack通知結果:", response);
+
     return {
       statusCode: 200,
-      body: JSON.stringify({success: true, message: 'Slack通知を送信しました'})
+      body: JSON.stringify({
+        success: true,
+        message: "Slack通知を送信しました",
+      }),
     };
   } catch (error) {
-    console.error('エラーが発生しました:', error);
+    console.error("エラーが発生しました:", error);
     return {
       statusCode: 500,
-      body: JSON.stringify({success: false, message: error.message})
+      body: JSON.stringify({ success: false, message: error.message }),
     };
   }
 };
@@ -94,32 +99,36 @@ async function sendToSlack(webhookUrl, message) {
     const options = {
       hostname: parsedUrl.hostname,
       path: parsedUrl.path,
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json'
-      }
+        "Content-Type": "application/json",
+      },
     };
-    
+
     const req = https.request(options, (res) => {
-      let responseBody = '';
-      res.on('data', (chunk) => {
+      let responseBody = "";
+      res.on("data", (chunk) => {
         responseBody += chunk;
       });
-      
-      res.on('end', () => {
+
+      res.on("end", () => {
         if (res.statusCode === 200) {
           resolve(responseBody);
         } else {
-          reject(new Error(`Slackからエラーレスポンスを受信: ${res.statusCode} ${responseBody}`));
+          reject(
+            new Error(
+              `Slackからエラーレスポンスを受信: ${res.statusCode} ${responseBody}`
+            )
+          );
         }
       });
     });
-    
-    req.on('error', (error) => {
+
+    req.on("error", (error) => {
       reject(error);
     });
-    
+
     req.write(JSON.stringify(message));
     req.end();
   });
-} 
+}
