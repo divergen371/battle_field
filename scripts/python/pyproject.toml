@@ -1,0 +1,90 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "battle-field-scripts"
+version = "0.1.0"
+description = "AWS Pentest Lab Terraform Scripts"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "boto3>=1.28.0",
+    "click>=8.1.0",
+    "loguru>=0.7.0",
+    "pyyaml>=6.0",
+    "typing-extensions>=4.5.0",
+    "rich>=13.0.0",
+]
+authors = [
+    { name = "Security Training Team" },
+]
+
+[project.scripts]
+bf-run = "cli.run:cli"
+bf-cost = "aws.cost:cli"
+bf-budget = "aws.budget:cli"
+
+[tool.rye]
+managed = true
+dev-dependencies = [
+    "pytest>=7.0.0",
+    "mypy>=1.0.0",
+    "ruff>=0.8.4",
+]
+
+[tool.ruff]
+# 自動修正可能な全てのルール
+fixable = ["ALL"]
+# 対象外とするディレクトリやファイル
+exclude = [
+    ".git",
+    ".mypy_cache",
+    ".pytest_cache",
+    ".ruff_cache",
+    ".venv",
+    "venv",
+    "tests/",
+]
+
+# 無視するルール
+ignore = [
+    "D1",    # ドキュメンテーション関連の警告を無視
+    "D203",  # クラス定義前の空行に関するルール
+    "D213",  # 複数行のドキュメント文字列の2行目に関するルール
+]
+
+# すべてのルールをチェック対象にする
+select = ["ALL"]
+
+# 行の最大長
+line-length = 100
+
+[tool.ruff.format]
+# フォーマット設定
+quote-style = "double"      # ダブルクォートを使用
+line-ending = "auto"        # 行末は自動検出
+indent-style = "space"      # インデントにスペースを使用
+
+[tool.mypy]
+python_version = "3.9"
+show_error_context = true            # エラー発生箇所のコンテキストを表示
+show_column_numbers = true           # エラー発生箇所の列番号を表示
+no_implicit_optional = true          # 暗黙的なOptional型を認めない
+check_untyped_defs = true            # 型アノテーションがない関数もチェック
+warn_redundant_casts = true          # 不要なキャストに警告
+allow_redefinition = true            # 同じ名前の再定義を許可
+allow_untyped_globals = false        # 型なしグローバル変数を許可しない
+color_output = true                  # 出力を色付け
+disallow_incomplete_defs = true      # 不完全な関数定義を許可しない
+disallow_untyped_defs = true         # 型なし関数定義を許可しない
+error_summary = true                 # エラーサマリーを表示
+ignore_missing_imports = true        # インポートエラーを無視
+strict = true                        # 厳格モードを有効化
+warn_return_any = true               # Any型の戻り値に警告
+warn_unreachable = true              # 到達不可能なコードに警告
+warn_unused_configs = true           # 使用されていない設定に警告
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py" 
