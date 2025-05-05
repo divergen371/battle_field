@@ -281,7 +281,7 @@ output "iam_vulnerable_no_mfa_policy" {
 
 output "iam_vulnerable_user_password" {
   description = "Vulnerable IAM user password (do not use in production)"
-  value       = aws_iam_user.vulnerable_user.password
+  value       = aws_iam_user_login_profile.vulnerable_profile.password
   sensitive   = true
 }
 
