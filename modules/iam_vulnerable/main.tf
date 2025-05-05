@@ -204,6 +204,32 @@ resource "aws_iam_policy" "no_mfa_policy" {
   })
 }
 
+# 14. Cost Explorer APIへのアクセスを許可するポリシー
+resource "aws_iam_policy" "cost_explorer_policy" {
+  name        = "${local.name_prefix}-cost-explorer-policy"
+  path        = "/vulnerable/"
+  description = "Policy allowing access to Cost Explorer API"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "ce:GetCostAndUsage"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+# Cost Explorer APIポリシーをユーザーにアタッチ
+resource "aws_iam_user_policy_attachment" "cost_explorer_policy_attachment" {
+  user       = aws_iam_user.vulnerable_user.name
+  policy_arn = aws_iam_policy.cost_explorer_policy.arn
+}
+
 # 自動破棄ロジック
 resource "null_resource" "ttl_destroyer" {
   provisioner "local-exec" {
@@ -277,6 +303,11 @@ output "iam_vulnerable_s3_policy" {
 output "iam_vulnerable_no_mfa_policy" {
   description = "Vulnerable policy allowing access without MFA"
   value       = aws_iam_policy.no_mfa_policy.arn
+}
+
+output "iam_vulnerable_cost_explorer_policy" {
+  description = "Policy allowing access to Cost Explorer API"
+  value       = aws_iam_policy.cost_explorer_policy.arn
 }
 
 output "iam_vulnerable_user_password" {
