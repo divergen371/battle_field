@@ -27,6 +27,44 @@ uv pip install -e .
 - `bf-cost` - AWS使用コストを確認
 - `bf-budget` - AWS予算アラートを設定
 
+## 必要なIAM権限
+
+このツールを使用するには、AWSユーザーに以下の権限が必要です：
+
+### コスト確認 (`bf-cost`)
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ce:GetCostAndUsage"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+```
+
+### 予算設定 (`bf-budget`)
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "budgets:*"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+```
+
 ## ディレクトリ構成
 
 ```
