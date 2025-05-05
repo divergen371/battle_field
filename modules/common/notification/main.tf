@@ -55,9 +55,11 @@ resource "aws_lambda_function" "slack_notification" {
   runtime       = "nodejs14.x"
   timeout       = 10
   
-  # Lambda関数はインラインで定義（コスト節約のため）
+  # インラインでコードを提供
   filename      = "${path.module}/lambda_function.zip"
-  source_code_hash = filebase64sha256("${path.module}/lambda_function.zip")
+  
+  # ZIP不在の場合にエラーを避けるための処理 - 空のハッシュを使用
+  source_code_hash = local.use_slack && fileexists("${path.module}/lambda_function.zip") ? filebase64sha256("${path.module}/lambda_function.zip") : null
   
   environment {
     variables = {
