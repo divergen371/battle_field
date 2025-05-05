@@ -146,14 +146,14 @@ resource "aws_security_group" "this" {
   }
 }
 
-# Metasploitable2のAMIデータソース（Ubuntu 16.04ベース）
+# Metasploitable2のAMIデータソース（Ubuntu 22.04ベース）
 data "aws_ami" "ubuntu" {
   most_recent = true
   owners      = ["099720109477"] # Canonical
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server-*"]
+    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
   }
 
   filter {
